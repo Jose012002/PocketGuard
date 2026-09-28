@@ -9,9 +9,9 @@ import androidx.datastore.preferences.preferencesDataStoreFile
 import com.equipo.pocketguard.actuation.AlarmController
 import com.equipo.pocketguard.data.ArmedStateStore
 import com.equipo.pocketguard.data.DataStoreArmedStateStore
+import com.equipo.pocketguard.data.SettingsRepository
 import com.equipo.pocketguard.data.eventlog.EventRecorder
 import com.equipo.pocketguard.data.eventlog.LogcatEventRecorder
-import com.equipo.pocketguard.decision.DetectionConfig
 import com.equipo.pocketguard.decision.DetectionConfigProvider
 import com.equipo.pocketguard.decision.EffectExecutor
 import com.equipo.pocketguard.service.WakeLockController
@@ -33,6 +33,9 @@ import kotlinx.coroutines.SupervisorJob
 abstract class AppModule {
 
     @Binds
+    abstract fun bindDetectionConfigProvider(impl: SettingsRepository): DetectionConfigProvider
+
+    @Binds
     abstract fun bindEffectExecutor(impl: AlarmController): EffectExecutor
 
     @Binds
@@ -46,11 +49,6 @@ abstract class AppModule {
     abstract fun bindEventRecorder(impl: LogcatEventRecorder): EventRecorder
 
     companion object {
-        // Provisional hasta la fase 7, que lo reemplaza por la configuración guardada en DataStore.
-        @Provides
-        fun provideDetectionConfigProvider(): DetectionConfigProvider =
-            DetectionConfigProvider { DetectionConfig.Default }
-
         /** Un solo DataStore para toda la app: dos instancias sobre el mismo archivo no están permitidas. */
         @Provides
         @Singleton

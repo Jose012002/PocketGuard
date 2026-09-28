@@ -84,3 +84,17 @@ Registro de decisiones tomadas donde la especificación era ambigua o inviable (
 | D-46 | La latencia entre el snapshot y el inicio de la alarma se guarda en el detalle del evento `ALARM` (`latencyMs=`) cuando la alarma es directa (gracia 0) | Es la medición de RNF-01 |
 | D-47 | El `startForeground` usa `FOREGROUND_SERVICE_TYPE_MANIFEST` mediante `ServiceCompat` y se protege contra `IllegalStateException` (Android 12+ no permite iniciar servicios en primer plano desde segundo plano) | Un reinicio pegajoso desde segundo plano podría ser rechazado; el servicio se cierra en lugar de fallar |
 | D-48 | El wake lock parcial se toma sin tiempo límite | Se libera al desarmar y en `onDestroy`; si el proceso muere, el sistema lo suelta. Un límite haría que la vigilancia se apague sola |
+
+## Fase 7 — Paquetes `data` y `security`
+
+| # | Decisión | Motivo |
+|---|---|---|
+| D-49 | `PinHasher` usa PBKDF2WithHmacSHA256, 120 000 iteraciones, sal de 16 bytes y clave de 256 bits, y compara con `MessageDigest.isEqual`. Se verificó contra el vector del RFC 7914 y otro calculado con `hashlib` | RF-02 y sección 7.3. La comparación en tiempo constante evita filtrar información por el tiempo de respuesta |
+| D-50 | `PinAuthenticator` (no está en la sección 7.3) une `PinRepository` con `AuthAttemptLimiter` y devuelve `Success`, `WrongPin(attemptsLeft)` o `Locked(remainingMs)` | Es la única vía de autenticación por PIN para las pantallas, así ninguna se salta el límite de intentos (RF-05) |
+| D-51 | `AuthAttemptLimiter` es un singleton en memoria: 5 fallos bloquean 30 s y el contador se reinicia; un fallo durante el bloqueo no lo extiende; un acierto o una biometría correcta lo levantan | Compartido por todas las pantallas. **Limitación:** reiniciar el proceso lo restablece |
+| D-52 | `BiometricAuthenticator` usa `BIOMETRIC_STRONG or BIOMETRIC_WEAK` con botón "usar PIN"; los intentos fallidos no se reportan y el diálogo sigue abierto; devuelve una función para cancelarlo | Con botón negativo no se puede añadir `DEVICE_CREDENTIAL`; el respaldo es el PIN de la app (RF-03). Requiere `FragmentActivity`: las actividades de la fase 8 deben heredar de ella |
+| D-53 | La biometría solo confirma la identidad del dueño; no se ata a una clave criptográfica (`CryptoObject`) | La especificación no lo pide y la alarma no protege secretos. Se anota como limitación |
+| D-54 | `SettingsRepository` es también el `DetectionConfigProvider`. `current()` lee DataStore una sola vez (bloqueando unos milisegundos) y luego responde desde memoria; `update()` mantiene esa copia al día | El servicio y los actuadores necesitan la configuración sin suspender. Todos los cambios pasan por el repositorio, así que la copia no se desincroniza |
+| D-55 | Toda la configuración se recorta a su rango al leer y al escribir (`coerced()`) | Un valor corrupto o editado a mano no puede romper la histéresis ni el motor |
+| D-56 | `PinRepository`, `SettingsRepository` y `ArmedStateStore` comparten el `DataStore` único (`pocketguard`) con claves distintas | Sección 7.3 y D-42. Los archivos del DataStore están excluidos de copias de seguridad (D-05) |
+| D-57 | El hash del PIN se calcula en `Dispatchers.Default` | Con 120 000 iteraciones tarda del orden de 100 ms: no debe bloquear el hilo principal |
