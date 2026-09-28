@@ -24,3 +24,14 @@ Registro de decisiones tomadas donde la especificación era ambigua o inviable (
 | D-11 | Los `Log(...)` del motor no llevan `detail` | El servicio ya registra estado anterior, nuevo y motivo por cada transición (RNF-15) |
 | D-12 | Kover mide solo el paquete `decision` | RNF-10 exige 90 % ahí. `./gradlew koverVerify` falla si baja de ese umbral; en la fase 11 se puede ampliar el reporte |
 | D-13 | `DetectionConfig` incluye `validate()`, `coerced()`, `withProfile()` y `matchingProfile()` | Ajustes (fase 10) necesita validar rangos y aplicar perfiles sin duplicar la lógica en la UI |
+
+## Fase 3 — Paquete `processing`
+
+| # | Decisión | Motivo |
+|---|---|---|
+| D-14 | Se define `SensorReading` (Proximity, Light, Acceleration) en `processing`; `capture` convertirá cada `SensorEvent` a este tipo, con `elapsedRealtimeNanos()` como marca de tiempo | Deja `SignalProcessor` en Kotlin puro y testeable sin Android, y cumple RNF-11 (capas conectadas por tipos de datos). La sección 8.1 habla de `Flow<SensorEvent>`, y el mapeo ocurre en el borde de `capture` |
+| D-15 | `SignalProcessor` recibe `ProcessingConfig` (3 umbrales de luz) y `SensorHardware` (rango de proximidad, luz, aceleración lineal) en vez de `DetectionConfig` | Evita un ciclo de dependencias `decision ↔ processing`. El servicio construye `ProcessingConfig` a partir de `DetectionConfig` |
+| D-16 | Con el sensor presente pero sin ninguna lectura aún, el snapshot dice "lejos" y "claro" (`isNear = false`, `isDark = false`) | Nunca se adelanta la condición de bolsillo al armar; para un sensor ausente se mantienen los valores de la especificación (`true`) |
+| D-17 | `GravityFilter` inicializa la gravedad con la primera muestra | Con gravedad inicial cero, la primera lectura (≈9,8 m/s²) daba ~7,8 m/s² de falso movimiento |
+| D-18 | Las lecturas de un sensor ausente se ignoran | Un `SensorHardware` sin proximidad no debe dejar que una lectura suelta cambie `isNear` |
+| D-19 | La regla de Kover exige 90 % de líneas **por paquete** (`decision` y `processing`) | Kover 0.9 no admite filtros por regla; la regla por paquete cubre RNF-10 y protege también a `processing` |

@@ -1,3 +1,6 @@
+import kotlinx.kover.gradle.plugin.dsl.AggregationType
+import kotlinx.kover.gradle.plugin.dsl.CoverageUnit
+import kotlinx.kover.gradle.plugin.dsl.GroupingEntityType
 import org.jetbrains.kotlin.gradle.dsl.JvmTarget
 
 plugins {
@@ -55,18 +58,24 @@ kotlin {
     }
 }
 
-// RNF-10: el paquete `decision` debe tener al menos 90 % de cobertura de líneas.
+// Cobertura de las capas que son Kotlin puro (decision y processing).
+// RNF-10: `decision` debe tener al menos 90 % de líneas cubiertas; la regla se aplica a cada paquete.
 // Reporte: ./gradlew koverHtmlReport   Verificación: ./gradlew koverVerify
 kover {
     reports {
         filters {
             includes {
-                packages("com.equipo.pocketguard.decision")
+                packages("com.equipo.pocketguard.decision", "com.equipo.pocketguard.processing")
             }
         }
         verify {
-            rule("Cobertura mínima del paquete decision") {
-                minBound(90)
+            rule("Cobertura mínima de líneas por paquete") {
+                groupBy = GroupingEntityType.PACKAGE
+                bound {
+                    minValue = 90
+                    coverageUnits = CoverageUnit.LINE
+                    aggregationForGroup = AggregationType.COVERED_PERCENTAGE
+                }
             }
         }
     }
