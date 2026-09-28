@@ -4,11 +4,11 @@ Alarma antirrobo para teléfonos Android: la armas, guardas el teléfono en el b
 
 Taller 2 — Desarrollo de un Sistema Integrado (UNI, 2026-2). Android · Kotlin · Jetpack Compose.
 
-**Integrantes:** _(completar)_
+**Integrantes:** 
 
 | Nombre | Código | Rol |
 |---|---|---|
-| _(nombre)_ | _(código)_ | _(rol)_ |
+| Jose Luis Diaz Silva | 20222025D | _(rol)_ |
 | _(nombre)_ | _(código)_ | _(rol)_ |
 
 ## 1. Flujo del sistema
