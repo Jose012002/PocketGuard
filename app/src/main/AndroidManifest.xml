@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
-<manifest xmlns:android="http://schemas.android.com/apk/res/android">
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools">
 
     <uses-permission android:name="android.permission.FOREGROUND_SERVICE" />
     <uses-permission android:name="android.permission.FOREGROUND_SERVICE_SPECIAL_USE" />
@@ -49,7 +50,8 @@
             android:launchMode="singleTask"
             android:showWhenLocked="true"
             android:theme="@style/Theme.PocketGuard"
-            android:turnScreenOn="true" />
+            android:turnScreenOn="true"
+            tools:ignore="UnusedAttribute" />
 
         <activity
             android:name=".ui.MainActivity"

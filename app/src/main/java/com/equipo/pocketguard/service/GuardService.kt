@@ -1,5 +1,6 @@
 package com.equipo.pocketguard.service
 
+import android.annotation.SuppressLint
 import android.app.Service
 import android.content.Intent
 import android.content.pm.ServiceInfo
@@ -100,6 +101,7 @@ class GuardService : Service() {
      * Debe llamarse pronto tras `startForegroundService` o Android aborta la app. Falla si el sistema no
      * permite iniciar servicios en primer plano desde segundo plano (Android 12+).
      */
+    @SuppressLint("InlinedApi") // FOREGROUND_SERVICE_TYPE_MANIFEST (API 29) es una constante; ServiceCompat la ignora antes de la API 29.
     private fun enterForeground(): Boolean {
         val current = repository.uiState.value.state
         val shown = if (current == GuardState.Disarmed) {

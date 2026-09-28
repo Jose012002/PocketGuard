@@ -146,3 +146,25 @@ Registro de decisiones tomadas donde la especificación era ambigua o inviable (
 | D-84 | Habilitar la biometría solo es posible si el teléfono la soporta; deshabilitarla siempre se puede | RF-03 |
 | D-85 | El inicio ofrece la exclusión de la optimización de batería (`ACTION_IGNORE_BATTERY_OPTIMIZATION_SETTINGS`) cuando no está excluida | Punto opcional de la sección 10; algunos fabricantes cierran servicios en segundo plano |
 | D-86 | Las unidades (`s`, `ms`, `lx`, `m/s²`, `×`) son recursos `translatable="false"` | Son símbolos, no texto traducible |
+
+## Fase 11 — Pulido y documentación
+
+| # | Decisión | Motivo |
+|---|---|---|
+| D-87 | `lint` queda con 0 errores y 2 avisos informativos (hay versiones más nuevas de AGP 9.4.1 y Kotlin 2.4.20) | Se mantienen AGP 9.3.2 y Kotlin 2.3.21, que son los verificados con el Android Studio instalado (D-01) y compilan y prueban limpios. Actualizarlos es un cambio de una línea en `gradle/libs.versions.toml` |
+| D-88 | Se suprimen tres avisos de `lint` con justificación: `InlinedApi` de `FOREGROUND_SERVICE_TYPE_MANIFEST` (constante que `ServiceCompat` ignora antes de la API 29) y `UnusedAttribute` de `showWhenLocked`/`turnScreenOn` en el manifiesto (API 27; en API 26 `AlarmActivity` usa los flags de ventana) | Son avisos esperados por `minSdk 26`; el comportamiento está cubierto por código |
+| D-89 | Se elimina el texto `cd_app_icon`, que no se usaba | Recurso muerto |
+| D-90 | El reporte de Kover cubre `decision` y `processing`, con la regla del 90 % por paquete. No se incluyen `capture`, `actuation`, `service`, `data`, `security` ni `ui` en la verificación | Contienen clases acopladas a hardware o a Android que solo se comprueban con pruebas de aceptación; medirlas con el mismo umbral daría un falso fallo. Su lógica no acoplada (pipeline, ViewModels, repositorios, PIN, waveform) sí tiene pruebas |
+| D-91 | `docs/PRUEBAS_ACEPTACION.md` añade una tabla para anotar los resultados de E1 a E10 y de los RNF que solo se miden a mano | Los RNF-01 a RNF-05 y RNF-14 dependen de un dispositivo real |
+
+## Resumen de desviaciones respecto a la especificación
+
+Las desviaciones que cambian algo visible o de arquitectura, para revisarlas de un vistazo:
+
+- **`SensorReading` entre `capture` y `processing`** en lugar de pasar `SensorEvent` (D-14).
+- **`AvailableSensors` dentro de los estados** en vez de dentro del motor (D-06).
+- **`GuardPipeline` separado de `GuardService`** para poder probarlo (D-38).
+- **`PinAuthenticator`, `GuardController`, `EffectExecutor`, `DetectionConfigProvider`** como interfaces o clases extra que no figuran en la sección 7.3 (D-50, D-59, D-39, D-28).
+- **`GuardStateRepository` en la fase 6** y no en la 7 (D-40).
+- **Fases 9 y 10 en un solo commit**, porque comparten navegación y textos.
+- **`compileSdk`/`targetSdk` 37** por ser lo instalado (D-03).

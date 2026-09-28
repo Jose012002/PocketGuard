@@ -1,7 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="app_name">PocketGuard</string>
-    <string name="cd_app_icon">Ícono de PocketGuard</string>
 
     <!-- Acciones comunes -->
     <string name="action_confirm">Confirmar</string>
