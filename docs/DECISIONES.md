@@ -35,3 +35,16 @@ Registro de decisiones tomadas donde la especificación era ambigua o inviable (
 | D-17 | `GravityFilter` inicializa la gravedad con la primera muestra | Con gravedad inicial cero, la primera lectura (≈9,8 m/s²) daba ~7,8 m/s² de falso movimiento |
 | D-18 | Las lecturas de un sensor ausente se ignoran | Un `SensorHardware` sin proximidad no debe dejar que una lectura suelta cambie `isNear` |
 | D-19 | La regla de Kover exige 90 % de líneas **por paquete** (`decision` y `processing`) | Kover 0.9 no admite filtros por regla; la regla por paquete cubre RNF-10 y protege también a `processing` |
+
+## Fase 4 — Paquete `capture`
+
+| # | Decisión | Motivo |
+|---|---|---|
+| D-20 | `SensorDataSource` es una interfaz con `proximity()`, `light()` y `acceleration(mode)`, más `readings(samplingMode: Flow<SamplingMode>)` que los fusiona. La implementación Android es `AndroidSensorDataSource` | RNF-11 (interfaces entre capas) y permite probar la fusión con un origen falso |
+| D-21 | Al cambiar el modo de muestreo solo se vuelve a registrar el acelerómetro (`flatMapLatest`); proximidad y luz siguen registradas | La sección 7.5 dice que `SetSampling` re-registra los listeners. Re-registrar solo el que cambia evita perder el último valor de proximidad y luz (sensores por cambio) |
+| D-22 | Cada listener recibe sus eventos en un `HandlerThread` propio, que se cierra en `awaitClose` | No carga el hilo principal con `SENSOR_DELAY_GAME` y no deja hilos huérfanos |
+| D-23 | Los flujos usan buffer de 64 con `DROP_OLDEST` | Si el consumidor se atrasa se conserva lo más reciente en vez de bloquear el hilo del sensor |
+| D-24 | Si `registerListener` devuelve `false`, el flujo termina con `IllegalStateException` | Un sensor obligatorio que no se puede registrar es un fallo grave; el servicio (fase 6) lo captura y desarma |
+| D-25 | El acelerómetro cuenta como disponible si existe `TYPE_ACCELEROMETER` **o** `TYPE_LINEAR_ACCELERATION` | Cualquiera de los dos sirve como fuente de movimiento |
+| D-26 | `SensorCapabilities` es un tipo de datos puro con `support` (FULL / DEGRADED / UNSUPPORTED), `missing`, `toAvailableSensors()` y `toHardware()` | La UI de inicio (fase 8) y el servicio (fase 6) leen el estado sin depender de Android |
+| D-27 | `AndroidSensorDataSource` no tiene pruebas unitarias | Solo se puede verificar con sensores reales: se comprueba en el teléfono con la pantalla Monitor (fase 9) |
