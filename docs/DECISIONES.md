@@ -48,3 +48,23 @@ Registro de decisiones tomadas donde la especificación era ambigua o inviable (
 | D-25 | El acelerómetro cuenta como disponible si existe `TYPE_ACCELEROMETER` **o** `TYPE_LINEAR_ACCELERATION` | Cualquiera de los dos sirve como fuente de movimiento |
 | D-26 | `SensorCapabilities` es un tipo de datos puro con `support` (FULL / DEGRADED / UNSUPPORTED), `missing`, `toAvailableSensors()` y `toHardware()` | La UI de inicio (fase 8) y el servicio (fase 6) leen el estado sin depender de Android |
 | D-27 | `AndroidSensorDataSource` no tiene pruebas unitarias | Solo se puede verificar con sensores reales: se comprueba en el teléfono con la pantalla Monitor (fase 9) |
+
+## Fase 5 — Paquete `actuation`
+
+| # | Decisión | Motivo |
+|---|---|---|
+| D-28 | `DetectionConfigProvider` (interfaz en `decision`) da acceso a la configuración vigente. Por ahora `AppModule` devuelve `DetectionConfig.Default`; la fase 7 lo reemplaza por DataStore | `TorchActuator` necesita `strobeIntervalMs` y `Actuator` solo tiene `start()`/`stop()`. Así los actuadores no dependen de cómo se guarda la configuración |
+| D-29 | `AlarmController.execute(effects, state)` recibe también el estado resultante y solo atiende los efectos de actuación. Monitoreo, wake lock, muestreo y `Log` quedan para `GuardService` | `UpdateStatusNotification` necesita el estado para elegir el texto. El `when` sobre `Effect` es exhaustivo, así que un efecto nuevo obliga a decidir quién lo atiende |
+| D-30 | Cada actuador se ejecuta dentro de un `try/catch` del controlador | RNF-16: un fallo del flash, del audio o de una notificación no impide que actúen los demás |
+| D-31 | La lógica que no toca hardware es Kotlin puro: `SirenWaveform` (síntesis), `VibrationPatterns` (patrones) y `TorchDriver` (interfaz sobre la linterna) | Permite probar la forma de onda, los patrones y el estroboscopio (incluido el caso de cámara ocupada) sin dispositivo |
+| D-32 | La sirena usa `pause()` + `flush()` antes de liberar el `AudioTrack`, no `stop()` | `stop()` deja sonar lo ya escrito en el búfer; así el corte es inmediato. El búfer es de 100 ms |
+| D-33 | `TorchActuator` reintenta en cada ciclo si la cámara está ocupada y registra solo el primer fallo de cada racha; el apagado final va en `finally` con `NonCancellable`, y un `start()` inmediato espera a que termine el apagado anterior | RNF-16 y evita que el apagado de una corrida pise el encendido de la siguiente |
+| D-34 | Las acciones de las notificaciones (tocar, "Desarmar") abren `AlarmActivity` con un extra de modo (`AlarmScreenContract`), no desarman directo | CU-07 exige autenticarse para desarmar. La clase se referencia por nombre para que `actuation` no dependa de `ui`; la actividad se crea en la fase 8 |
+| D-35 | Solo tres canales (`guard_status`, `pre_alarm`, `alarm`). Los avisos puntuales (tiempo de armado agotado) usan `guard_status` | Es lo que pide la sección 8.3 |
+| D-36 | Los canales `pre_alarm` y `alarm` no tienen sonido ni vibración propios | Los aportan la sirena y `VibrationActuator`; si no, sonaría dos veces |
+| D-37 | Sin el permiso de notificaciones no se publica nada, pero el servicio y los actuadores siguen funcionando | RF-04: el permiso puede negarse |
+
+**Limitaciones conocidas de esta fase**
+- Si el proceso muere con la sirena sonando, el volumen de alarma queda en el máximo, porque el volumen anterior solo se guarda en memoria.
+- Con "No molestar" en modo "Silencio total", el sistema puede bloquear incluso el canal de alarma.
+- Desde Android 14 el sistema puede permitir descartar la notificación de alarma aunque sea `ongoing`; la alarma sigue sonando hasta autenticarse.

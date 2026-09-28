@@ -8,4 +8,31 @@
     <string name="placeholder_status">Proyecto base listo</string>
 
     <string name="cd_app_icon">Ícono de PocketGuard</string>
+
+    <!-- Canales de notificación -->
+    <string name="channel_status_name">Estado de la alarma</string>
+    <string name="channel_status_description">Muestra si la alarma está armando, vigilando o desarmada</string>
+    <string name="channel_pre_alarm_name">Pre-alarma</string>
+    <string name="channel_pre_alarm_description">Aviso de que retiraron el teléfono, con tiempo para desbloquearlo</string>
+    <string name="channel_alarm_name">Alarma</string>
+    <string name="channel_alarm_description">Alarma antirrobo activada</string>
+
+    <!-- Notificación de estado -->
+    <string name="notif_status_disarmed">Desarmado</string>
+    <string name="notif_status_arming">Guarda el teléfono en tu bolsillo</string>
+    <string name="notif_status_stored">Guardado: vigilando</string>
+    <string name="notif_status_suspicion">Actividad sospechosa: analizando</string>
+    <string name="notif_status_pre_alarm">Pre-alarma: desbloquea para cancelar</string>
+    <string name="notif_status_alarm">¡Alarma activada!</string>
+    <string name="notif_action_disarm">Desarmar</string>
+
+    <!-- Pre-alarma y alarma -->
+    <string name="notif_pre_alarm_title">Retiraron el teléfono</string>
+    <string name="notif_pre_alarm_text">Desbloquea para cancelar antes de que suene la alarma</string>
+    <string name="notif_alarm_title">¡ALARMA!</string>
+    <string name="notif_alarm_text">Toca para desbloquear y detener la alarma</string>
+
+    <!-- Avisos -->
+    <string name="message_insufficient_sensors">Este teléfono no tiene los sensores mínimos para armar la alarma.</string>
+    <string name="message_arming_timeout">No se detectó el bolsillo. La alarma se desarmó.</string>
 </resources>
