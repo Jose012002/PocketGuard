@@ -115,6 +115,21 @@ class SignalProcessorTest {
     }
 
     @Test
+    fun `el snapshot conserva el lux crudo junto al suavizado`() {
+        val p = processor()
+        p.onReading(light(100f))
+        val s = p.onReading(light(0f))
+        assertEquals(0f, s.rawLux!!, 0f)
+        assertEquals(50f, s.lux!!, 1e-4f)
+    }
+
+    @Test
+    fun `sin sensor de luz no hay lux crudo`() {
+        val p = processor(fullHardware.copy(hasLightSensor = false))
+        assertNull(p.onReading(light(5000f)).rawLux)
+    }
+
+    @Test
     fun `un pico aislado de luz no cambia el estado por el suavizado`() {
         val p = processor()
         repeat(5) { p.onReading(light(2f)) }

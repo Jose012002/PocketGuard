@@ -91,6 +91,104 @@
     <string name="alarm_disarm_mode_title">Desarmar la alarma</string>
     <string name="alarm_debug_stop">Detener (debug)</string>
 
+    <!-- Navegación e inicio -->
+    <string name="action_cancel">Cancelar</string>
+    <string name="nav_monitor">Monitor</string>
+    <string name="nav_settings">Ajustes</string>
+    <string name="nav_history">Historial</string>
+    <string name="home_battery_title">Mejora la fiabilidad</string>
+    <string name="home_battery_body">Algunos teléfonos cierran los servicios en segundo plano para ahorrar batería. Excluye PocketGuard de la optimización de batería para que la alarma no se detenga sola.</string>
+
+    <!-- Monitor (CU-08, CU-11) -->
+    <string name="monitor_title">Monitor de sensores</string>
+    <string name="monitor_state">Estado: %s</string>
+    <string name="monitor_source_live">Lectura en vivo mientras esta pantalla está visible.</string>
+    <string name="monitor_source_service">Lecturas del servicio de vigilancia.</string>
+    <string name="monitor_waiting">Esperando la primera lectura…</string>
+    <string name="monitor_proximity">Proximidad</string>
+    <string name="monitor_cm">%s cm</string>
+    <string name="monitor_near">Cerca</string>
+    <string name="monitor_far">Lejos</string>
+    <string name="monitor_light">Luz</string>
+    <string name="monitor_lux_smoothed">%s lx (suavizado)</string>
+    <string name="monitor_lux_raw">Crudo: %s lx</string>
+    <string name="monitor_dark">Oscuro</string>
+    <string name="monitor_bright">Claro</string>
+    <string name="monitor_motion">Movimiento</string>
+    <string name="monitor_ms2">%s m/s²</string>
+    <string name="monitor_motion_threshold">Umbral: %s m/s²</string>
+    <string name="monitor_motion_description">Movimiento %1$s metros por segundo cuadrado, umbral %2$s</string>
+    <string name="monitor_baseline">Luz base registrada: %s lx</string>
+    <string name="monitor_indicators_title">Indicadores de la ventana de sospecha</string>
+    <string name="indicator_proximity_far">Proximidad lejos</string>
+    <string name="indicator_light_jump">Salto de luz</string>
+    <string name="indicator_motion">Movimiento</string>
+    <string name="indicator_active">Activo</string>
+    <string name="indicator_inactive">Inactivo</string>
+    <string name="monitor_traces_title">Trazas de sensores (debug)</string>
+    <string name="monitor_traces_hint">Graba las lecturas en un CSV para calibrar los umbrales con este teléfono.</string>
+    <string name="monitor_record">Grabar</string>
+    <string name="monitor_stop_recording">Detener</string>
+    <string name="monitor_share_trace">Compartir %s</string>
+
+    <!-- Historial (CU-10) -->
+    <string name="history_title">Historial</string>
+    <string name="history_empty">Todavía no hay eventos.</string>
+    <string name="history_clear">Borrar historial</string>
+    <string name="history_clear_confirm">Se eliminarán todos los eventos guardados. Esta acción no se puede deshacer.</string>
+    <string name="event_armed">Armado</string>
+    <string name="event_stored">Teléfono guardado</string>
+    <string name="event_suspicion">Sospecha</string>
+    <string name="event_pre_alarm">Pre-alarma</string>
+    <string name="event_alarm">Alarma</string>
+    <string name="event_disarmed">Desarmado</string>
+    <string name="event_timeout">Tiempo de armado agotado</string>
+    <string name="event_auth_failed">Intento de desbloqueo fallido</string>
+    <string name="event_unknown">Evento desconocido</string>
+
+    <!-- Ajustes (CU-09) -->
+    <string name="settings_title">Ajustes</string>
+    <string name="settings_locked">Los ajustes están bloqueados mientras la alarma está armada. Desármala para cambiarlos.</string>
+    <string name="settings_profile_title">Sensibilidad</string>
+    <string name="settings_profile_hint">Un perfil ajusta a la vez el umbral de movimiento, el salto de luz y la ventana de coincidencia.</string>
+    <string name="settings_profile_custom">Personalizado: los umbrales no coinciden con ningún perfil.</string>
+    <string name="profile_low">Baja</string>
+    <string name="profile_medium">Media</string>
+    <string name="profile_high">Alta</string>
+    <string name="settings_range">Rango: %1$s a %2$s</string>
+    <string name="settings_reset">Restablecer valores</string>
+    <string name="settings_biometric">Desarmar con huella o rostro</string>
+    <string name="settings_biometric_desc">El PIN siempre queda como respaldo.</string>
+    <string name="settings_biometric_unavailable">No disponible: este teléfono no tiene biometría registrada.</string>
+    <string name="unit_none" translatable="false"></string>
+    <string name="unit_seconds" translatable="false">s</string>
+    <string name="unit_ms" translatable="false">ms</string>
+    <string name="unit_lux" translatable="false">lx</string>
+    <string name="unit_ms2" translatable="false">m/s²</string>
+    <string name="unit_times" translatable="false">×</string>
+    <string name="setting_arming_stable">Estabilidad para guardar</string>
+    <string name="setting_arming_stable_desc">Tiempo que el teléfono debe estar en el bolsillo antes de darlo por guardado.</string>
+    <string name="setting_arming_timeout">Tiempo máximo de armado</string>
+    <string name="setting_arming_timeout_desc">Si no detecta el bolsillo en este tiempo, la alarma se desarma.</string>
+    <string name="setting_dark_enter">Umbral para oscuro</string>
+    <string name="setting_dark_enter_desc">Por debajo de esta luz se considera oscuro.</string>
+    <string name="setting_dark_exit">Umbral para claro</string>
+    <string name="setting_dark_exit_desc">Por encima de esta luz se considera claro. Debe superar al umbral de oscuro en al menos 5.</string>
+    <string name="setting_lux_smoothing">Suavizado de la luz</string>
+    <string name="setting_lux_smoothing_desc">1 no suaviza; valores bajos suavizan más y reaccionan más despacio.</string>
+    <string name="setting_light_jump_factor">Salto de luz (factor)</string>
+    <string name="setting_light_jump_factor_desc">Cuántas veces debe superar la luz a la luz base para contar como salto.</string>
+    <string name="setting_light_jump_min">Salto de luz (mínimo)</string>
+    <string name="setting_light_jump_min_desc">Luz mínima para contar como salto, aunque la luz base sea muy baja.</string>
+    <string name="setting_motion_threshold">Umbral de movimiento</string>
+    <string name="setting_motion_threshold_desc">Aceleración desde la que se considera que el teléfono se mueve.</string>
+    <string name="setting_window">Ventana de coincidencia</string>
+    <string name="setting_window_desc">Tiempo en que deben coincidir proximidad, luz y movimiento para declarar una extracción.</string>
+    <string name="setting_grace">Periodo de gracia</string>
+    <string name="setting_grace_desc">Tiempo para desbloquear antes de que suene la alarma. Con 0 suena de inmediato.</string>
+    <string name="setting_strobe">Intervalo del flash</string>
+    <string name="setting_strobe_desc">Tiempo entre encendido y apagado del flash estroboscópico.</string>
+
     <!-- Canales de notificación -->
     <string name="channel_status_name">Estado de la alarma</string>
     <string name="channel_status_description">Muestra si la alarma está armando, vigilando o desarmada</string>

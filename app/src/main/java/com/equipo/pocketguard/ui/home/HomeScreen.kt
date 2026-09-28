@@ -2,6 +2,7 @@ package com.equipo.pocketguard.ui.home
 
 import android.content.Context
 import android.content.Intent
+import android.os.PowerManager
 import android.provider.Settings
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
@@ -67,6 +68,9 @@ import com.equipo.pocketguard.ui.toUi
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun HomeScreen(
+    onOpenMonitor: () -> Unit,
+    onOpenSettings: () -> Unit,
+    onOpenHistory: () -> Unit,
     modifier: Modifier = Modifier,
     viewModel: HomeViewModel = hiltViewModel(),
 ) {
@@ -76,7 +80,11 @@ fun HomeScreen(
     val context = LocalContext.current
 
     var notificationsEnabled by remember { mutableStateOf(areNotificationsEnabled(context)) }
-    LifecycleEventEffect(Lifecycle.Event.ON_RESUME) { notificationsEnabled = areNotificationsEnabled(context) }
+    var batteryOptimized by remember { mutableStateOf(isBatteryOptimized(context)) }
+    LifecycleEventEffect(Lifecycle.Event.ON_RESUME) {
+        notificationsEnabled = areNotificationsEnabled(context)
+        batteryOptimized = isBatteryOptimized(context)
+    }
 
     val timeoutMessage = stringResource(R.string.home_message_arming_timeout)
     val sensorsMessage = stringResource(R.string.home_message_insufficient_sensors)
@@ -133,8 +141,17 @@ fun HomeScreen(
                 }
             }
 
+            Row(horizontalArrangement = Arrangement.spacedBy(8.dp), modifier = Modifier.fillMaxWidth()) {
+                ShortcutButton(stringResource(R.string.nav_monitor), onOpenMonitor, Modifier.weight(1f))
+                ShortcutButton(stringResource(R.string.nav_settings), onOpenSettings, Modifier.weight(1f))
+                ShortcutButton(stringResource(R.string.nav_history), onOpenHistory, Modifier.weight(1f))
+            }
+
             if (!notificationsEnabled) {
                 NotificationsWarning(onOpenSettings = { openNotificationSettings(context) })
+            }
+            if (batteryOptimized) {
+                BatteryHint(onOpenSettings = { openBatterySettings(context) })
             }
             SensorsCard(ui.capabilities)
         }
@@ -181,6 +198,26 @@ private fun StateIndicator(state: com.equipo.pocketguard.decision.GuardState) {
         }
         Text(label, style = MaterialTheme.typography.headlineLarge)
         Text(hint, style = MaterialTheme.typography.bodyLarge, textAlign = TextAlign.Center)
+    }
+}
+
+@Composable
+private fun ShortcutButton(text: String, onClick: () -> Unit, modifier: Modifier = Modifier) {
+    OutlinedButton(onClick = onClick, modifier = modifier.heightIn(min = 48.dp)) {
+        Text(text, maxLines = 1)
+    }
+}
+
+@Composable
+private fun BatteryHint(onOpenSettings: () -> Unit) {
+    Card(modifier = Modifier.fillMaxWidth()) {
+        Column(Modifier.padding(16.dp), verticalArrangement = Arrangement.spacedBy(8.dp)) {
+            Text(stringResource(R.string.home_battery_title), style = MaterialTheme.typography.titleMedium)
+            Text(stringResource(R.string.home_battery_body), style = MaterialTheme.typography.bodyMedium)
+            OutlinedButton(onClick = onOpenSettings, modifier = Modifier.heightIn(min = 48.dp)) {
+                Text(stringResource(R.string.action_open_settings))
+            }
+        }
     }
 }
 
@@ -246,6 +283,16 @@ private fun NotificationsWarning(onOpenSettings: () -> Unit) {
             OutlinedButton(onClick = onOpenSettings) { Text(stringResource(R.string.action_open_settings)) }
         }
     }
+}
+
+private fun isBatteryOptimized(context: Context): Boolean =
+    !context.getSystemService(PowerManager::class.java).isIgnoringBatteryOptimizations(context.packageName)
+
+/** Abre la lista de optimización de batería del sistema; algunos fabricantes cierran servicios de forma agresiva. */
+private fun openBatterySettings(context: Context) {
+    context.startActivity(
+        Intent(Settings.ACTION_IGNORE_BATTERY_OPTIMIZATION_SETTINGS).addFlags(Intent.FLAG_ACTIVITY_NEW_TASK),
+    )
 }
 
 private fun areNotificationsEnabled(context: Context) = NotificationManagerCompat.from(context).areNotificationsEnabled()

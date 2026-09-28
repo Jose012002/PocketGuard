@@ -36,6 +36,7 @@ class SignalProcessor(
     private var distanceCm: Float? = null
     private var isNear = !hardware.hasProximity
     private var lux: Float? = null
+    private var rawLux: Float? = null
     private var isDark = !hardware.hasLightSensor
     private var motion = 0f
 
@@ -51,6 +52,7 @@ class SignalProcessor(
             }
             is SensorReading.Light -> if (hardware.hasLightSensor) {
                 val smoothed = luxSmoother.update(reading.lux)
+                rawLux = reading.lux
                 lux = smoothed
                 isDark = darkDetector.update(smoothed)
             }
@@ -69,6 +71,7 @@ class SignalProcessor(
             isDark = isDark,
             motion = motion,
             timestampNs = reading.timestampNs,
+            rawLux = rawLux,
         )
     }
 
@@ -80,6 +83,7 @@ class SignalProcessor(
         distanceCm = null
         isNear = !hardware.hasProximity
         lux = null
+        rawLux = null
         isDark = !hardware.hasLightSensor
         motion = 0f
     }

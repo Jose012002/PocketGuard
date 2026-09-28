@@ -14,4 +14,6 @@ data class SensorSnapshot(
     val motion: Float,
     /** `SystemClock.elapsedRealtimeNanos()` al recibir el evento. */
     val timestampNs: Long,
+    /** Lux tal como lo entregó el sensor, sin suavizar (para el monitor); `null` si no hay sensor de luz. */
+    val rawLux: Float? = null,
 )

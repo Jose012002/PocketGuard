@@ -10,8 +10,6 @@ import com.equipo.pocketguard.actuation.AlarmController
 import com.equipo.pocketguard.data.ArmedStateStore
 import com.equipo.pocketguard.data.DataStoreArmedStateStore
 import com.equipo.pocketguard.data.SettingsRepository
-import com.equipo.pocketguard.data.eventlog.EventRecorder
-import com.equipo.pocketguard.data.eventlog.LogcatEventRecorder
 import com.equipo.pocketguard.decision.DetectionConfigProvider
 import com.equipo.pocketguard.decision.EffectExecutor
 import com.equipo.pocketguard.service.GuardController
@@ -48,10 +46,6 @@ abstract class AppModule {
 
     @Binds
     abstract fun bindArmedStateStore(impl: DataStoreArmedStateStore): ArmedStateStore
-
-    // Provisional hasta la fase 10, que lo reemplaza por el registro en Room.
-    @Binds
-    abstract fun bindEventRecorder(impl: LogcatEventRecorder): EventRecorder
 
     companion object {
         /** Un solo DataStore para toda la app: dos instancias sobre el mismo archivo no están permitidas. */

@@ -119,3 +119,30 @@ Registro de decisiones tomadas donde la especificación era ambigua o inviable (
 **Limitaciones conocidas de esta fase**
 - Las pantallas Compose no tienen pruebas automáticas: la lógica está en los ViewModels (probados), y el aspecto se comprueba en el teléfono.
 - El desarme desde la notificación de estado solo funciona con la app en primer plano o con `AlarmActivity` visible; si el sistema la bloquea, hay que abrir la app.
+
+## Fase 9 — Monitor de sensores y grabación de trazas
+
+| # | Decisión | Motivo |
+|---|---|---|
+| D-70 | `SensorSnapshot` gana `rawLux` (con valor por defecto `null`) | La sección 9 pide mostrar el lux crudo y el suavizado; hasta ahora el snapshot solo llevaba el suavizado |
+| D-71 | El monitor usa dos fuentes: desarmado registra sus propios listeners solo mientras la pantalla está visible (`WhileSubscribed(0)`); armado muestra las lecturas que publica el servicio | Cumple la nota de CU-08 y evita registrar listeners duplicados mientras vigila |
+| D-72 | La pantalla se refresca como máximo cada 50 ms (`sample`) y emite un estado inicial antes de la primera lectura | Supera el mínimo de 10 actualizaciones por segundo sin recomponer con cada lectura del acelerómetro; el botón de grabar responde al instante |
+| D-73 | Los indicadores del monitor: en `Suspicion`, los acumulados por la ventana; en `Stored`, contra la luz base; en el resto, contra 0 (equivale a "supera el mínimo") | Muestra lo mismo que ve el motor de detección, y sirve para calibrar aun sin armar |
+| D-74 | `TraceRecorder` está siempre compilado, pero su interfaz (botones de grabar y compartir) solo aparece con `BuildConfig.DEBUG`. El `FileProvider` y su ruta están en el `sourceSet` `debug` | RF-31 pide grabar solo en debug; el proveedor no debe existir en release |
+| D-75 | El CSV añade `elapsed_ms` (tiempo desde la primera fila) y `state` (estado de la alarma), además de las lecturas | Facilita alinear la traza con lo que hizo la alarma al calibrar umbrales |
+| D-76 | Cerrar la pantalla del monitor detiene una grabación en curso | No dejar archivos abiertos ni grabar sin que el dueño lo vea |
+
+## Fase 10 — Ajustes e historial
+
+| # | Decisión | Motivo |
+|---|---|---|
+| D-77 | `RoomEventRecorder` reemplaza al registrador de Logcat. Inserta mediante una cola (`Channel`) consumida por una sola corrutina | Conserva el orden de los eventos sin bloquear al pipeline de detección; un fallo de disco solo se registra en Logcat |
+| D-78 | El historial se recorta a los 500 eventos más recientes tras cada inserción | Evita que la base crezca sin límite |
+| D-79 | Room usa `exportSchema = false` y no hay migraciones (versión 1) | Es la primera versión y el historial es prescindible |
+| D-80 | `SettingFields` describe cada parámetro (rango, paso, unidad, conversión) y toma los rangos de `DetectionConfig.Ranges` | La pantalla no define umbrales propios (sección 0, punto 6) y los rangos se prueban una vez |
+| D-81 | Cada deslizador guarda al soltar, no en cada movimiento | No escribir en disco en cada pixel |
+| D-82 | Los tiempos se muestran en segundos donde son de varios segundos (estabilidad, tiempo máximo de armado, gracia) y en ms donde son cortos | Legibilidad; el valor interno sigue en ms |
+| D-83 | Con la alarma armada, `SettingsViewModel` rechaza cualquier cambio de detección, además de deshabilitar los controles | CU-09: el bloqueo no depende solo de la interfaz |
+| D-84 | Habilitar la biometría solo es posible si el teléfono la soporta; deshabilitarla siempre se puede | RF-03 |
+| D-85 | El inicio ofrece la exclusión de la optimización de batería (`ACTION_IGNORE_BATTERY_OPTIMIZATION_SETTINGS`) cuando no está excluida | Punto opcional de la sección 10; algunos fabricantes cierran servicios en segundo plano |
+| D-86 | Las unidades (`s`, `ms`, `lx`, `m/s²`, `×`) son recursos `translatable="false"` | Son símbolos, no texto traducible |
