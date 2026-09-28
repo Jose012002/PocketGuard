@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">PocketGuard</string>
+
+    <!-- Pantalla base de la fase 1; se reemplaza por la pantalla de inicio en la fase 8 -->
+    <string name="placeholder_title">PocketGuard</string>
+    <string name="placeholder_subtitle">Alarma antirrobo para tu bolsillo</string>
+    <string name="placeholder_status">Proyecto base listo</string>
+
+    <string name="cd_app_icon">Ícono de PocketGuard</string>
+</resources>
