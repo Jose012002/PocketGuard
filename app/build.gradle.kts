@@ -5,6 +5,7 @@ plugins {
     alias(libs.plugins.kotlin.compose)
     alias(libs.plugins.ksp)
     alias(libs.plugins.hilt)
+    alias(libs.plugins.kover)
 }
 
 android {
@@ -51,6 +52,23 @@ android {
 kotlin {
     compilerOptions {
         jvmTarget.set(JvmTarget.JVM_17)
+    }
+}
+
+// RNF-10: el paquete `decision` debe tener al menos 90 % de cobertura de líneas.
+// Reporte: ./gradlew koverHtmlReport   Verificación: ./gradlew koverVerify
+kover {
+    reports {
+        filters {
+            includes {
+                packages("com.equipo.pocketguard.decision")
+            }
+        }
+        verify {
+            rule("Cobertura mínima del paquete decision") {
+                minBound(90)
+            }
+        }
     }
 }
 
