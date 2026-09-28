@@ -2,6 +2,7 @@ package com.equipo.pocketguard.actuation
 
 import android.util.Log
 import com.equipo.pocketguard.decision.Effect
+import com.equipo.pocketguard.decision.EffectExecutor
 import com.equipo.pocketguard.decision.GuardState
 import javax.inject.Inject
 import javax.inject.Singleton
@@ -20,9 +21,9 @@ class AlarmController @Inject constructor(
     private val torch: TorchActuator,
     private val vibration: VibrationActuator,
     private val notifier: AlarmNotifier,
-) {
+) : EffectExecutor {
     /** Ejecuta los efectos en orden. [state] es el estado ya resultante de la transición. */
-    fun execute(effects: List<Effect>, state: GuardState) {
+    override fun execute(effects: List<Effect>, state: GuardState) {
         effects.forEach { execute(it, state) }
     }
 

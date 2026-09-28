@@ -68,3 +68,19 @@ Registro de decisiones tomadas donde la especificación era ambigua o inviable (
 - Si el proceso muere con la sirena sonando, el volumen de alarma queda en el máximo, porque el volumen anterior solo se guarda en memoria.
 - Con "No molestar" en modo "Silencio total", el sistema puede bloquear incluso el canal de alarma.
 - Desde Android 14 el sistema puede permitir descartar la notificación de alarma aunque sea `ongoing`; la alarma sigue sonando hasta autenticarse.
+
+## Fase 6 — Paquete `service`
+
+| # | Decisión | Motivo |
+|---|---|---|
+| D-38 | La orquestación vive en `GuardPipeline` (sin `Service`); `GuardService` solo aporta el ciclo de vida de Android | Permite probar el bucle, el ticker, los sensores y el wake lock con dobles y tiempo virtual (17 pruebas), sin dispositivo |
+| D-39 | `EffectExecutor` (interfaz en `decision`) es lo que el pipeline usa para actuar; `AlarmController` la implementa | RNF-11: el servicio no depende de la clase concreta de actuación, y `actuation` no depende de `service` |
+| D-40 | `GuardStateRepository` se crea ya en esta fase (la sección 12 lo pone en la fase 7). Expone `uiState` (estado + última lectura), `state` (solo cambios de estado) y `messages` (avisos puntuales sin repetición) | El servicio necesita publicar estado; los avisos no se reproducen a quien se suscribe tarde, porque además se publican como notificación |
+| D-41 | Se añaden `ArmedStateStore` (DataStore) y `EventRecorder` (por ahora solo Logcat; Room llega en la fase 10) | `ArmedStateStore` permite rearmar tras un reinicio del sistema (sección 7.5); `EventRecorder` es el punto donde se registrará el historial |
+| D-42 | Hay un único `DataStore<Preferences>` (`pocketguard`) provisto por Hilt | DataStore no admite dos instancias sobre el mismo archivo; las fases 7 y 10 lo reutilizan |
+| D-43 | La configuración se lee y se congela al armar (`DetectionConfig` pasa por `coerced()`) | Los ajustes están bloqueados mientras está armado (CU-09). `coerced()` evita que un valor corrupto rompa la histéresis |
+| D-44 | `ACTION_DISARM` lleva `EXTRA_AUTH_OK` (por defecto `false`); la interfaz verifica el PIN y avisa al servicio | El servicio no se exporta, así que solo esta app puede enviar la orden. Un intento fallido queda registrado como `AUTH_FAILED` |
+| D-45 | Si falla la captura de sensores (`registerListener` devuelve `false` o el flujo lanza), el pipeline se desarma | Es preferible a aparentar que se vigila. Por ahora el dueño lo nota porque desaparece la notificación; un aviso específico queda como mejora |
+| D-46 | La latencia entre el snapshot y el inicio de la alarma se guarda en el detalle del evento `ALARM` (`latencyMs=`) cuando la alarma es directa (gracia 0) | Es la medición de RNF-01 |
+| D-47 | El `startForeground` usa `FOREGROUND_SERVICE_TYPE_MANIFEST` mediante `ServiceCompat` y se protege contra `IllegalStateException` (Android 12+ no permite iniciar servicios en primer plano desde segundo plano) | Un reinicio pegajoso desde segundo plano podría ser rechazado; el servicio se cierra en lugar de fallar |
+| D-48 | El wake lock parcial se toma sin tiempo límite | Se libera al desarmar y en `onDestroy`; si el proceso muere, el sistema lo suelta. Un límite haría que la vigilancia se apague sola |
