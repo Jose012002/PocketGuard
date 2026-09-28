@@ -98,3 +98,24 @@ Registro de decisiones tomadas donde la especificación era ambigua o inviable (
 | D-55 | Toda la configuración se recorta a su rango al leer y al escribir (`coerced()`) | Un valor corrupto o editado a mano no puede romper la histéresis ni el motor |
 | D-56 | `PinRepository`, `SettingsRepository` y `ArmedStateStore` comparten el `DataStore` único (`pocketguard`) con claves distintas | Sección 7.3 y D-42. Los archivos del DataStore están excluidos de copias de seguridad (D-05) |
 | D-57 | El hash del PIN se calcula en `Dispatchers.Default` | Con 120 000 iteraciones tarda del orden de 100 ms: no debe bloquear el hilo principal |
+
+## Fase 8 — Onboarding, inicio y pantalla de alarma
+
+| # | Decisión | Motivo |
+|---|---|---|
+| D-58 | `MainActivity` y `AlarmActivity` heredan de `FragmentActivity` (no de `ComponentActivity`) | `BiometricPrompt` lo exige (D-52). Compose funciona igual |
+| D-59 | `GuardController` (interfaz en `service`) es lo que usan los ViewModels para armar y desarmar; `ServiceGuardController` la implementa sobre `GuardCommands` | Las pantallas se prueban sin Android y no dependen del servicio concreto (RNF-11) |
+| D-60 | `UnlockViewModel` y `UnlockSection`/`UnlockPanel` son la única interfaz de autenticación: el diálogo de "Desarmar" del inicio y `AlarmActivity` los comparten | Un solo lugar aplica el límite de intentos (RF-05) y la biometría; ninguna pantalla se lo salta |
+| D-61 | Cada PIN incorrecto envía `disarm(authOk = false)` al servicio, también el que provoca el bloqueo; los intentos hechos con el bloqueo vigente ni se verifican ni se registran | Queda `AUTH_FAILED` en el historial por cada intento real, sin inflarlo con pulsaciones bloqueadas |
+| D-62 | Al llegar a 6 dígitos el PIN se envía solo; con 4 o 5 hay que pulsar Confirmar | El PIN puede medir de 4 a 6, así que solo el máximo permite adivinar que terminó |
+| D-63 | `AlarmActivity` se cierra sola cuando el estado llega a `Desarmado` y sus colores dependen del estado: rojo en pre-alarma y alarma, neutro en el modo "desarmar" abierto desde la notificación de estado | Una sola pantalla sirve para CU-05, CU-06 y CU-07 |
+| D-64 | La biometría se abre sola en pre-alarma y alarma si el dueño la habilitó; en el diálogo de inicio solo con el botón | En pre-alarma cuenta cada segundo de la gracia |
+| D-65 | En el onboarding el PIN se guarda al confirmarlo, antes del permiso de notificaciones. Si el usuario cierra la app en ese punto, la próxima vez entra directo al inicio, donde un aviso ofrece abrir los ajustes de notificaciones | No se pierde el PIN ya confirmado; RF-04 sigue cubierto por el aviso permanente del inicio |
+| D-66 | El aviso de notificaciones desactivadas del inicio se recalcula en cada `ON_RESUME` | Si el dueño las activa en Ajustes y vuelve, el aviso desaparece solo |
+| D-67 | Los accesos a Monitor, Ajustes e Historial se añaden al inicio en las fases 9 y 10, cuando existan sus pantallas | Evita botones que no llevan a ningún lado |
+| D-68 | Se usa `material-icons-extended` (ya declarado en el catálogo desde la fase 1) | Los íconos de huella, borrar, candado abierto, escudo, reloj de arena y ojo no están en el conjunto básico. Aumenta el APK de depuración (~25 MB); R8 lo reduce en release |
+| D-69 | Las pruebas de `UnlockViewModel` usan `runBlocking` y no `runTest` | `runTest` avanza el tiempo virtual por su cuenta mientras espera al hilo real del hash, y ese tiempo es el reloj del bloqueo |
+
+**Limitaciones conocidas de esta fase**
+- Las pantallas Compose no tienen pruebas automáticas: la lógica está en los ViewModels (probados), y el aspecto se comprueba en el teléfono.
+- El desarme desde la notificación de estado solo funciona con la app en primer plano o con `AlarmActivity` visible; si el sistema la bloquea, hay que abrir la app.

@@ -14,6 +14,8 @@ import com.equipo.pocketguard.data.eventlog.EventRecorder
 import com.equipo.pocketguard.data.eventlog.LogcatEventRecorder
 import com.equipo.pocketguard.decision.DetectionConfigProvider
 import com.equipo.pocketguard.decision.EffectExecutor
+import com.equipo.pocketguard.service.GuardController
+import com.equipo.pocketguard.service.ServiceGuardController
 import com.equipo.pocketguard.service.WakeLockController
 import com.equipo.pocketguard.service.WakeLockManager
 import dagger.Binds
@@ -34,6 +36,9 @@ abstract class AppModule {
 
     @Binds
     abstract fun bindDetectionConfigProvider(impl: SettingsRepository): DetectionConfigProvider
+
+    @Binds
+    abstract fun bindGuardController(impl: ServiceGuardController): GuardController
 
     @Binds
     abstract fun bindEffectExecutor(impl: AlarmController): EffectExecutor

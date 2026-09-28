@@ -1,13 +1,95 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="app_name">PocketGuard</string>
-
-    <!-- Pantalla base de la fase 1; se reemplaza por la pantalla de inicio en la fase 8 -->
-    <string name="placeholder_title">PocketGuard</string>
-    <string name="placeholder_subtitle">Alarma antirrobo para tu bolsillo</string>
-    <string name="placeholder_status">Proyecto base listo</string>
-
     <string name="cd_app_icon">Ícono de PocketGuard</string>
+
+    <!-- Acciones comunes -->
+    <string name="action_confirm">Confirmar</string>
+    <string name="action_arm">Armar</string>
+    <string name="action_disarm">Desarmar</string>
+    <string name="action_continue">Continuar</string>
+    <string name="action_next">Siguiente</string>
+    <string name="action_back">Atrás</string>
+    <string name="action_close">Cerrar</string>
+    <string name="action_open_settings">Abrir ajustes</string>
+    <string name="cd_delete_digit">Borrar el último dígito</string>
+    <string name="cd_use_biometric">Usar huella o rostro</string>
+    <plurals name="pin_digits_entered">
+        <item quantity="one">%d dígito ingresado</item>
+        <item quantity="other">%d dígitos ingresados</item>
+    </plurals>
+
+    <!-- Estados (sección 9) -->
+    <string name="state_disarmed">Desarmado</string>
+    <string name="state_disarmed_hint">La alarma no está vigilando</string>
+    <string name="state_arming">Armando</string>
+    <string name="state_arming_hint">Guarda el teléfono en tu bolsillo</string>
+    <string name="state_stored">Guardado</string>
+    <string name="state_stored_hint">Vigilando: si alguien lo saca, sonará la alarma</string>
+    <string name="state_suspicion">Sospecha</string>
+    <string name="state_suspicion_hint">Analizando un posible movimiento</string>
+    <string name="state_pre_alarm">Pre-alarma</string>
+    <string name="state_pre_alarm_hint">Desbloquea para cancelar la alarma</string>
+    <string name="state_alarm">Alarma</string>
+    <string name="state_alarm_hint">La alarma está sonando</string>
+
+    <!-- Onboarding (CU-01) -->
+    <string name="onboarding_step_indicator">Paso %1$d de %2$d</string>
+    <string name="onboarding_intro_1_title">Protege tu teléfono</string>
+    <string name="onboarding_intro_1_body">PocketGuard es una alarma antirrobo: la armas, guardas el teléfono en el bolsillo o la mochila y, si alguien lo saca, suena una sirena.</string>
+    <string name="onboarding_intro_2_title">Tres sensores trabajan juntos</string>
+    <string name="onboarding_intro_2_body">Para evitar falsas alarmas, solo suena cuando coinciden la proximidad, la luz y el movimiento. Caminar con el teléfono guardado no la activa.</string>
+    <string name="onboarding_intro_3_title">Tú decides cuándo se detiene</string>
+    <string name="onboarding_intro_3_body">Solo tu PIN, o tu huella si la habilitas, desactiva la alarma. Primero vas a crear tu PIN.</string>
+    <string name="onboarding_create_pin_title">Crea tu PIN</string>
+    <string name="onboarding_create_pin_subtitle">De 4 a 6 dígitos. Lo necesitarás para desarmar la alarma.</string>
+    <string name="onboarding_confirm_pin_title">Confirma tu PIN</string>
+    <string name="onboarding_confirm_pin_subtitle">Ingrésalo otra vez para asegurarnos de que lo recuerdas.</string>
+    <string name="onboarding_error_too_short">El PIN debe tener al menos 4 dígitos.</string>
+    <string name="onboarding_error_mismatch">Los PIN no coinciden. Vuelve a crearlo.</string>
+    <string name="onboarding_error_save_failed">No se pudo guardar el PIN. Inténtalo de nuevo.</string>
+    <string name="onboarding_permissions_title">Permite las notificaciones</string>
+    <string name="onboarding_permissions_body">La alarma usa una notificación para avisarte de su estado y para mostrar la pantalla de desbloqueo cuando alguien saca el teléfono.</string>
+    <string name="onboarding_permissions_allow">Permitir notificaciones</string>
+    <string name="onboarding_permissions_denied">Sin notificaciones la alarma no podrá mostrar su estado ni la pantalla de desbloqueo. Puedes activarlas en los ajustes del sistema.</string>
+    <string name="onboarding_permissions_continue_anyway">Continuar de todos modos</string>
+
+    <!-- Inicio (CU-02, CU-07) -->
+    <string name="home_title">PocketGuard</string>
+    <string name="home_sensors_title">Sensores del teléfono</string>
+    <string name="sensor_proximity">Proximidad</string>
+    <string name="sensor_light">Luz</string>
+    <string name="sensor_accelerometer">Acelerómetro</string>
+    <string name="sensor_flash">Flash</string>
+    <string name="sensor_available">Disponible</string>
+    <string name="sensor_missing">No disponible</string>
+    <string name="home_degraded_warning">Modo degradado: la alarma decidirá con los sensores disponibles y será menos precisa.</string>
+    <string name="home_unsupported_reason">Este teléfono no tiene los sensores mínimos para armar la alarma: hace falta el acelerómetro y, al menos, el sensor de proximidad o el de luz.</string>
+    <string name="home_no_flash_note">Sin flash: la alarma usará la sirena y la vibración.</string>
+    <string name="home_notifications_off_title">Notificaciones desactivadas</string>
+    <string name="home_notifications_off_body">La alarma no podrá mostrar su estado ni la pantalla de desbloqueo.</string>
+    <string name="home_message_arming_timeout">No se detectó el bolsillo. La alarma se desarmó.</string>
+    <string name="home_message_insufficient_sensors">Este teléfono no tiene los sensores mínimos para armar la alarma.</string>
+
+    <!-- Desbloqueo (CU-05, CU-06, CU-07) -->
+    <string name="unlock_title">Ingresa tu PIN</string>
+    <string name="unlock_disarm_title">Desarmar la alarma</string>
+    <string name="unlock_wrong_pin">PIN incorrecto.</string>
+    <plurals name="unlock_attempts_left">
+        <item quantity="one">Queda %d intento.</item>
+        <item quantity="other">Quedan %d intentos.</item>
+    </plurals>
+    <string name="unlock_locked">Demasiados intentos. Espera %d s para volver a intentar.</string>
+    <string name="unlock_biometric_title">Confirma que eres tú</string>
+    <string name="unlock_biometric_negative">Usar PIN</string>
+
+    <!-- Pantalla de alarma -->
+    <string name="alarm_pre_alarm_title">Retiraron el teléfono</string>
+    <string name="alarm_pre_alarm_countdown">La alarma sonará en %d s</string>
+    <string name="alarm_alarm_title">¡ALARMA!</string>
+    <string name="alarm_alarm_subtitle">Ingresa tu PIN para detenerla</string>
+    <string name="alarm_disarm_mode_title">Desarmar la alarma</string>
+    <string name="alarm_debug_stop">Detener (debug)</string>
 
     <!-- Canales de notificación -->
     <string name="channel_status_name">Estado de la alarma</string>

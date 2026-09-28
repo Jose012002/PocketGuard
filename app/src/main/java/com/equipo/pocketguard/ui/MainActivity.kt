@@ -1,68 +1,41 @@
 package com.equipo.pocketguard.ui
 
 import android.os.Bundle
-import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
-import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Column
+import androidx.activity.viewModels
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Scaffold
-import androidx.compose.material3.Text
-import androidx.compose.runtime.Composable
-import androidx.compose.ui.Alignment
+import androidx.compose.material3.Surface
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.tooling.preview.Preview
-import androidx.compose.ui.unit.dp
-import com.equipo.pocketguard.R
+import androidx.fragment.app.FragmentActivity
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.equipo.pocketguard.ui.navigation.AppNavHost
 import com.equipo.pocketguard.ui.theme.PocketGuardTheme
 import dagger.hilt.android.AndroidEntryPoint
 
+/** Actividad principal. Hereda de `FragmentActivity` porque `BiometricPrompt` lo exige. */
 @AndroidEntryPoint
-class MainActivity : ComponentActivity() {
+class MainActivity : FragmentActivity() {
+
+    private val viewModel: MainViewModel by viewModels()
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
         setContent {
             PocketGuardTheme {
-                Scaffold(modifier = Modifier.fillMaxSize()) { innerPadding ->
-                    PlaceholderScreen(Modifier.padding(innerPadding))
+                Surface(modifier = Modifier.fillMaxSize(), color = MaterialTheme.colorScheme.background) {
+                    val hasPin by viewModel.hasPin.collectAsStateWithLifecycle()
+                    when (val known = hasPin) {
+                        // Mientras se lee el almacenamiento no se muestra ninguna pantalla (evita parpadeos).
+                        null -> Box(Modifier.fillMaxSize())
+                        else -> AppNavHost(hasPin = known)
+                    }
                 }
             }
         }
     }
-}
-
-/** Pantalla provisional de la fase 1. La navegación real llega en la fase 8. */
-@Composable
-private fun PlaceholderScreen(modifier: Modifier = Modifier) {
-    Column(
-        modifier = modifier.fillMaxSize().padding(24.dp),
-        verticalArrangement = Arrangement.Center,
-        horizontalAlignment = Alignment.CenterHorizontally,
-    ) {
-        Text(
-            text = stringResource(R.string.placeholder_title),
-            style = MaterialTheme.typography.headlineLarge,
-        )
-        Text(
-            text = stringResource(R.string.placeholder_subtitle),
-            style = MaterialTheme.typography.bodyLarge,
-        )
-        Text(
-            text = stringResource(R.string.placeholder_status),
-            style = MaterialTheme.typography.labelLarge,
-            color = MaterialTheme.colorScheme.primary,
-            modifier = Modifier.padding(top = 16.dp),
-        )
-    }
-}
-
-@Preview(showBackground = true)
-@Composable
-private fun PlaceholderScreenPreview() {
-    PocketGuardTheme { PlaceholderScreen() }
 }
