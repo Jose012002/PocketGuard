@@ -6,10 +6,11 @@ Taller 2 — Desarrollo de un Sistema Integrado (UNI, 2026-2). Android · Kotlin
 
 **Integrantes:** 
 
-| Nombre | Código | Rol |
+| Nombre | Código |
 |---|---|---|
-| Jose Luis Diaz Silva | 20222025D | _(rol)_ |
-| _(nombre)_ | _(código)_ | _(rol)_ |
+| Jose Luis Diaz Silva | 20222025D |
+| Yadira Jhenyfer Cantorin Lope | 20222174J |
+| Rosse Emily Morales Santiago | 20222105H |
 
 ## 1. Flujo del sistema
 
