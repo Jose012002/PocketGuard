@@ -7,7 +7,7 @@ Taller 2 — Desarrollo de un Sistema Integrado (UNI, 2026-2). Android · Kotlin
 **Integrantes:** 
 
 | Nombre | Código |
-|---|---|---|
+|---|---|
 | Jose Luis Diaz Silva | 20222025D |
 | Yadira Jhenyfer Cantorin Lope | 20222174J |
 | Rosse Emily Morales Santiago | 20222105H |
